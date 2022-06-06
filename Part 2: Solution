@@ -1,0 +1,186 @@
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Restaurant {
+    private String name;
+    private String location;
+    public LocalTime openingTime;
+    public LocalTime closingTime;
+    private List<Item> menu = new ArrayList<Item>();
+
+    public Restaurant(String name, String location, LocalTime openingTime, LocalTime closingTime) {
+        this.name = name;
+        this.location = location;
+        this.openingTime = openingTime;
+        this.closingTime = closingTime;
+    }
+
+    public boolean isRestaurantOpen() {
+
+        if ((getCurrentTime > openingTime) && (getCurrentTime < closingTime)){
+
+            then return true;}
+
+        else {
+            return false;
+        }
+
+
+    }
+
+    public LocalTime getCurrentTime(){ return  LocalTime.now(); }
+
+    public List<Item> getMenu() {
+        return (menu.get());
+    }
+
+    private Item findItemByName(String itemName){
+        for(Item item: menu) {
+            if(item.getName().equals(itemName))
+                return item;
+        }
+        return null;
+    }
+
+    public void addToMenu(String name, int price) {
+        Item newItem = new Item(name,price);
+        menu.add(newItem);
+    }
+    public void getOrderCost(String name, int ... price){
+
+
+            System.out.println("Number of arguments passed " + values.length);
+            for(String name : price){
+                System.out.println(sum(price) + " ");
+    }
+    
+    public void removeFromMenu(String itemName) throws itemNotFoundException {
+
+        Item itemToBeRemoved = findItemByName(itemName);
+        if (itemToBeRemoved == null)
+            throw new itemNotFoundException(itemName);
+
+        menu.remove(itemToBeRemoved);
+    }
+    public void displayDetails(){
+        System.out.println("Restaurant:"+ name + "\n"
+                +"Location:"+ location + "\n"
+                +"Opening time:"+ openingTime +"\n"
+                +"Closing time:"+ closingTime +"\n"
+                +"Menu:"+"\n"+getMenu());
+
+    }
+
+    public String getName() {
+        return name;
+    }
+
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
+
+public class RestaurantService {
+    private static List<Restaurant> restaurants = new ArrayList<>();
+
+    public Restaurant findRestaurantByName(String restaurantName){
+      if (restaurants.contains(restaurantName)) {
+          then return(Restaurant);
+      }
+
+          else {
+          return null;
+      }
+
+
+
+    }
+
+
+    public Restaurant addRestaurant(String name, String location, LocalTime openingTime, LocalTime closingTime) {
+        Restaurant newRestaurant = new Restaurant(name, location, openingTime, closingTime);
+        restaurants.add(newRestaurant);
+        return newRestaurant;
+    }
+
+    public Restaurant removeRestaurant(String restaurantName) throws restaurantNotFoundException {
+        Restaurant restaurantToBeRemoved = findRestaurantByName(restaurantName);
+        restaurants.remove(restaurantToBeRemoved);
+        return restaurantToBeRemoved;
+    }
+
+    public List<Restaurant> getRestaurants() {
+        return restaurants;
+    }
+}
+
+import org.junit.jupiter.api.*;
+
+import java.time.LocalTime;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+
+class RestaurantServiceTest {
+
+    RestaurantService service = new RestaurantService();
+    Restaurant restaurant;
+    private void extracted() {
+        LocalTime openingTime = LocalTime.parse("10:30:00");
+        LocalTime closingTime = LocalTime.parse("22:00:00");
+        restaurant =new Restaurant("Amelie's cafe","Chennai",openingTime,closingTime);
+        restaurant.addToMenu("Sweet corn soup",119);
+        restaurant.addToMenu("Vegetable lasagne", 269);
+
+
+        //>>>>>>>>>>>>>>>>>>>>>>SEARCHING<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+    @Test
+    public void searching_for_existing_restaurant_should_return_expected_restaurant_object() throws restaurantNotFoundException {
+            extracted();
+
+        int existingRestaurant = service.getRestaurants() .size();
+        restaurant = service.findRestaurantByName("Amelie's cafe");
+        assertEquals(existingRestaurant, service.getRestaurants().size())
+    }
+
+    //You may watch the video by Muthukumaran on how to write exceptions in Course 3: Testing and Version control: Optional content
+    @Test
+    public void searching_for_non_existing_restaurant_should_throw_exception() throws restaurantNotFoundException {
+            extracted();
+
+        int existingRestaurant = service.getRestaurants() .size();
+        restaurant = service.findRestaurantByName("Pantry d'or");
+        assertThrows(restaurantNotFoundException.class,()->service.findRestaurantByName("Pantry d'or"));
+    }
+    //<<<<<<<<<<<<<<<<<<<<SEARCHING>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
+
+
+    //>>>>>>>>>>>>>>>>>>>>>>ADMIN: ADDING & REMOVING RESTAURANTS<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+    @Test
+    public void remove_restaurant_should_reduce_list_of_restaurants_size_by_1() throws restaurantNotFoundException {
+            extracted();
+
+        int initialNumberOfRestaurants = service.getRestaurants().size();
+        service.removeRestaurant("Amelie's cafe");
+        assertEquals(initialNumberOfRestaurants-1, service.getRestaurants().size());
+    }
+
+    @Test
+    public void removing_restaurant_that_does_not_exist_should_throw_exception() throws restaurantNotFoundException {
+            extracted();
+        assertThrows(restaurantNotFoundException.class,()->service.removeRestaurant("Pantry d'or"));
+    }
+
+    @Test
+    public void add_restaurant_should_increase_list_of_restaurants_size_by_1(){
+            extracted();
+
+        int initialNumberOfRestaurants = service.getRestaurants().size();
+        service.addRestaurant("Pumpkin Tales","Chennai",LocalTime.parse("12:00:00"),LocalTime.parse("23:00:00"));
+        assertEquals(initialNumberOfRestaurants + 1,service.getRestaurants().size());
+    }
+    //<<<<<<<<<<<<<<<<<<<<ADMIN: ADDING & REMOVING RESTAURANTS>>>>>>>>>>>>>>>>>>>>>>>>>>
+}
