@@ -1,0 +1,167 @@
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Restaurant {
+    private String name;
+    private String location;
+    public LocalTime openingTime;
+    public LocalTime closingTime;
+    private List<Item> menu = new ArrayList<Item>();
+
+    public Restaurant(String name, String location, LocalTime openingTime, LocalTime closingTime) {
+        this.name = name;
+        this.location = location;
+        this.openingTime = openingTime;
+        this.closingTime = closingTime;
+    }
+
+    public boolean isRestaurantOpen() {
+
+        if ((getCurrentTime > openingTime) && (getCurrentTime < closingTime)){
+
+            then return true;}
+
+        else {
+            return false;
+        }
+
+
+    }
+
+    public LocalTime getCurrentTime(){ return  LocalTime.now(); }
+
+    public List<Item> getMenu() {
+        return (menu.get());
+    }
+
+    private Item findItemByName(String itemName){
+        for(Item item: menu) {
+            if(item.getName().equals(itemName))
+                return item;
+        }
+        return null;
+    }
+
+    public void addToMenu(String name, int price) {
+        Item newItem = new Item(name,price);
+        menu.add(newItem);
+    }
+    
+    //Implemented feature for calculating order value
+    
+    public void getOrderCost(String name, int ... price){
+
+
+            System.out.println("Number of arguments passed " + values.length);
+            for(String name : price){
+                System.out.println(sum(price) + " ");
+    }
+    
+    public void removeFromMenu(String itemName) throws itemNotFoundException {
+
+        Item itemToBeRemoved = findItemByName(itemName);
+        if (itemToBeRemoved == null)
+            throw new itemNotFoundException(itemName);
+
+        menu.remove(itemToBeRemoved);
+    }
+    public void displayDetails(){
+        System.out.println("Restaurant:"+ name + "\n"
+                +"Location:"+ location + "\n"
+                +"Opening time:"+ openingTime +"\n"
+                +"Closing time:"+ closingTime +"\n"
+                +"Menu:"+"\n"+getMenu());
+
+    }
+
+    public String getName() {
+        return name;
+    }
+
+
+
+
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.time.LocalTime;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+class RestaurantTest {
+    Restaurant restaurant;
+    private void extracted() {
+        LocalTime openingTime = LocalTime.parse("10:30:00");
+        LocalTime closingTime = LocalTime.parse("22:00:00");
+        restaurant =new Restaurant("Amelie's cafe","Chennai",openingTime,closingTime);
+        restaurant.addToMenu("Sweet corn soup",119);
+        restaurant.addToMenu("Vegetable lasagne", 269);
+
+
+    }
+
+    @Test
+    public void is_restaurant_open_should_return_true_if_time_is_between_opening_and_closing_time(){
+        extracted();
+
+        int openRestaurant = service.getCurrentTime();
+        restaurant = service.isRestaurantOpen();
+        assertEquals(openRestaurant,restaurant);
+    }
+
+    @Test
+    public void is_restaurant_open_should_return_false_if_time_is_outside_opening_and_closing_time(){
+         LocalTime openingTime = LocalTime.parse("10:30:00");
+        LocalTime closingTime = LocalTime.parse("14:00:00");
+        restaurant = service.addRestaurant("Amelie's cafe","Chennai",openingTime,closingTime);
+        restaurant.addToMenu("Sweet corn soup",119);
+        restaurant.addToMenu("Vegetable lasagne", 269);
+
+        int openRestaurant = service.getCurrentTime();
+        restaurant = service.isRestaurantOpen();
+        assertEquals(openRestaurant,restaurant);
+    }
+
+    //<<<<<<<<<<<<<<<<<<<<<<<<<OPEN/CLOSED>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
+    //>>>>>>>>>>>>>>>>>>>>>>>>>>>MENU<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+    @Test
+    public void testTotalOrdercost(){
+        assertEquals("570",restaurant.getOrderCost());
+    }
+    //Passing test case
+    @Test public void testTotalOrdercost(){
+        assertEquals("300",restaurant.getOrderCost());
+    }
+    
+    @Test
+    public void adding_item_to_menu_should_increase_menu_size_by_1(){
+        extracted();
+
+        int initialMenuSize = restaurant.getMenu().size();
+        restaurant.addToMenu("Sizzling brownie",319);
+        assertEquals(initialMenuSize+1,restaurant.getMenu().size());
+    }
+    @Test
+    public void removing_item_from_menu_should_decrease_menu_size_by_1() throws itemNotFoundException {
+        extracted();
+        int initialMenuSize = restaurant.getMenu().size();
+        restaurant.removeFromMenu("Vegetable lasagne");
+        assertEquals(initialMenuSize-1,restaurant.getMenu().size());
+    }
+    @Test
+    public void removing_item_that_does_not_exist_should_throw_exception() {
+        extracted();
+        assertThrows(itemNotFoundException.class,
+                ()->restaurant.removeFromMenu("French fries"));
+    }
+
+
+    //<<<<<<<<<<<<<<<<<<<<<<<MENU>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+}
